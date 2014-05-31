@@ -80,6 +80,13 @@ class ImageHash(object):
 	def __hash__(self):
 		return binary_array_to_int(self.hash)
 
+	def __iter__(self):
+		return numpy.nditer(self.hash, order='C')  # Specify memory order, so we're (theoretically) platform agnostic
+
+	# Convert hash to a binary string representation (e.g. literal "10110101..."). Useful for things like database storage, etc...
+	def as_binary_string_repr(self):
+		return "".join(["1" if val else "0" for val in self ])
+
 def hex_to_hash(hexstr):
 	l = []
 	if len(hexstr) != 16:

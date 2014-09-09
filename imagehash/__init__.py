@@ -32,8 +32,17 @@ Rotation by 26: 21 Hamming difference
 
 from PIL import Image
 import numpy
-import scipy.fftpack
 
+"""
+Try to import the scipy.fftpack module. If it is not available pHash will not work, but one can still use aHash and dHash.
+"""
+try:
+	import scipy.fftpack
+	havefftpack = True
+except ImportError:
+	havefftpack = False
+
+	
 def binary_array_to_hex(arr):
 	h = 0
 	s = []
@@ -116,6 +125,9 @@ Implementation follows http://www.hackerfactor.com/blog/index.php?/archives/432-
 @image must be a PIL instance.
 """
 def phash(image, hash_size=32):
+	if (havefftpack == False):
+		import scipy.fftpack
+		
 	image = image.convert("L").resize((hash_size, hash_size), Image.ANTIALIAS)
 	pixels = numpy.array(image.getdata(), dtype=numpy.float).reshape((hash_size, hash_size))
 	dct = scipy.fftpack.dct(pixels)

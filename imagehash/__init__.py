@@ -45,7 +45,7 @@ def binary_array_to_hex(arr):
 	return "".join(s)
 
 def binary_array_to_int(arr):
-	return sum([2**i for i,v in enumerate(arr.flatten()) if v])
+	return sum([2**(i % 8) for i,v in enumerate(arr.flatten()) if v])
 
 """
 Hash encapsulation. Can be used for dictionary keys and comparisons.
@@ -117,9 +117,25 @@ def phash(image, hash_size=32):
 	image = image.convert("L").resize((hash_size, hash_size), Image.ANTIALIAS)
 	pixels = numpy.array(image.getdata(), dtype=numpy.float).reshape((hash_size, hash_size))
 	dct = scipy.fftpack.dct(scipy.fftpack.dct(pixels, axis=0), axis=1)
-	dctlowfreq = dct[:8, :8]
+	dctlowfreq = dct[:int(hash_size/4), :int(hash_size/4)]
 	med = numpy.median(dctlowfreq)
 	diff = dctlowfreq > med
+	return ImageHash(diff)
+
+"""
+Perceptual Hash computation.
+
+Implementation follows http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html
+
+@image must be a PIL instance.
+"""
+def phash_simple(image, hash_size=32):
+	image = image.convert("L").resize((hash_size, hash_size), Image.ANTIALIAS)
+	pixels = numpy.array(image.getdata(), dtype=numpy.float).reshape((hash_size, hash_size))
+	dct = scipy.fftpack.dct(pixels)
+	dctlowfreq = dct[:8, 1:9]
+	avg = dctlowfreq.mean()
+	diff = dctlowfreq > avg
 	return ImageHash(diff)
 
 """

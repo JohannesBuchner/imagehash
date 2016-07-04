@@ -37,7 +37,7 @@ Source hosted at github: https://github.com/JohannesBuchner/imagehash
 .. _aHash: http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html
 .. _pHash: http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html
 .. _dHash: http://www.hackerfactor.com/blog/index.php?/archives/529-Kind-of-Like-That.html
-.. _wHash: https://www.kaggle.com/c/avito-duplicate-ads-detection/
+.. _wHash: https://fullstackml.com/2016/07/02/wavelet-image-hash-in-python/
 .. _pypi: https://pypi.python.org/pypi/ImageHash
 
 

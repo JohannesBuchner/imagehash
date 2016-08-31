@@ -142,11 +142,19 @@ def phash_simple(image, hash_size=8, highfreq_factor=4):
 	import scipy.fftpack
 	img_size = hash_size * highfreq_factor
 	image = image.convert("L").resize((img_size, img_size), Image.ANTIALIAS)
-	pixels = numpy.array(image.getdata(), dtype=numpy.float).reshape((img_size, img_size))
-	dct = scipy.fftpack.dct(pixels)
-	dctlowfreq = dct[:hash_size, 1:hash_size+1]
-	avg = dctlowfreq.mean()
-	diff = dctlowfreq > avg
+	
+	pixels = list(image.getdata())
+	width, height = image.size
+	pixels = np.array([pixels[i * width:(i + 1) * width] for i in xrange(height)])
+	
+	d=[]
+	diff=[]
+	for i in range(0,width):
+		for j in range(0,height-1):
+			d.append(pixels[i,j]>pixels[i,j+1])
+		diff.append(d)
+		d=[]
+	
 	return ImageHash(diff)
 
 def dhash(image, hash_size=8):

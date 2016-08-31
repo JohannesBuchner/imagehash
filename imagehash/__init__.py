@@ -166,10 +166,24 @@ def dhash(image, hash_size=8):
 	@image must be a PIL instance.
 	"""
 	image = image.convert("L").resize((hash_size + 1, hash_size), Image.ANTIALIAS)
-	pixels = numpy.array(image.getdata(), dtype=numpy.float).reshape((hash_size + 1, hash_size))
-	# compute differences
-	diff = pixels[1:, :] > pixels[:-1, :]
-	return ImageHash(diff)
+	
+	pixels = list(image.getdata())
+	width, height = image.size
+	pixels = np.array([pixels[i * width:(i + 1) * width] for i in xrange(height)])
+	
+	print pixels
+ 
+	d=[]
+	diff=[]
+	
+	for i in range(0,height):
+		for j in range(0,width-1):
+			d.append(pixels[i,j]>pixels[i,j+1])
+		diff.append(d)
+		d=[]
+	print np.asarray(diff)
+	
+	return ImageHash(np.asarray(diff))
 
 
 def whash(image, hash_size = 8, image_scale = None, mode = 'haar', remove_max_haar_ll = True):

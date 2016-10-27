@@ -1,3 +1,2 @@
 include README.rst
-include *.txt 
 include LICENSE 

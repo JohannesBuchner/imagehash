@@ -1,0 +1,6 @@
+six
+pep8
+pillow
+numpy
+scipy
+pywavelets

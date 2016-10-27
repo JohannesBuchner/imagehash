@@ -1,6 +1,7 @@
+*~
 *.pyc
 env
-*.jpg
 build
 dist
-ImageHash.egg-info/
+imagehash.egg-info/
+.eggs

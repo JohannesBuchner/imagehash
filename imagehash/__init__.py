@@ -37,6 +37,9 @@ import numpy
 #import pywt
 
 
+__version__ = '3.1'
+
+
 def _binary_array_to_hex(arr):
 	"""
 	internal function to make a hex string out of a binary array

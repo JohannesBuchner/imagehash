@@ -9,9 +9,20 @@ long_description = ""
 with open('README.rst') as f:
     long_description = f.read()
 
+def extract_version():
+    fname = os.path.join(os.path.abspath(os.path.dirname(__file__)),
+                         'imagehash', '__init__.py')
+    with open(fname) as fi:
+        for line in fi:
+            if (line.startswith('__version__')):
+                _, version = line.split('=')
+                version = version.strip()[1:-1]  # Removes quotation.
+                break
+    return version
+
 setup(
     name='ImageHash',
-    version='3.1',
+    version=extract_version(),
     author='Johannes Buchner',
     author_email='buchner.johannes@gmx.at',
     packages=['imagehash', 'imagehash.tests'],

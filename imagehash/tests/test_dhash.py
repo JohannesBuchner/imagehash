@@ -10,6 +10,7 @@ import imagehash.tests as tests
 class Test(tests.TestImageHash):
     def setUp(self):
         self.image = self.get_data_image()
+        self.image_small = self.get_data_image('small.jpg')
         self.func = imagehash.dhash
 
     def test_dhash(self):
@@ -20,6 +21,9 @@ class Test(tests.TestImageHash):
 
     def test_dhash_stored(self):
         self.check_hash_stored(self.func, self.image)
+
+    def test_dhash_small_image(self):
+        self.assertIsNotNone(self.func(self.image_small))
 
 
 if __name__ == '__main__':

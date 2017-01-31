@@ -50,6 +50,10 @@ class Test(unittest.TestCase):
             with six.assertRaisesRegex(self, AssertionError, emsg):
                 imagehash.whash(self.image, image_scale=image_scale+1)
 
+    def test_whash_small_image(self):
+        image_small = Image.open('data/small.jpg')
+        self.assertIsNotNone(imagehash.whash(image_small))
+
 
 if __name__ == '__main__':
     unittest.main()

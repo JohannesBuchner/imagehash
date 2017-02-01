@@ -215,7 +215,9 @@ def whash(image, hash_size = 8, image_scale = None, mode = 'haar', remove_max_ha
 	if image_scale is not None:
 		assert image_scale & (image_scale - 1) == 0, "image_scale is not power of 2"
 	else:
-		image_scale = 2**int(numpy.log2(min(image.size)))
+		image_natural_scale = 2**int(numpy.log2(min(image.size)))
+		image_scale = max(image_natural_scale, hash_size)
+
 	ll_max_level = int(numpy.log2(image_scale))
 
 	level = int(numpy.log2(hash_size))

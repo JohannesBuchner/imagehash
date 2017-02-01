@@ -58,3 +58,9 @@ class TestImageHash(unittest.TestCase):
                 '- stringified hash {}'.format(distance, image_hash,
                                                other_hash))
         self.assertEqual(distance, 0, emsg)
+
+    def check_small_image(self, func, image):
+        try:
+            func(image.resize((4,9)))
+        except Exception as e:
+            self.fail(e)

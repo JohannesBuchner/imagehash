@@ -21,6 +21,9 @@ class Test(tests.TestImageHash):
     def test_phash_stored(self):
         self.check_hash_stored(self.func, self.image)
 
+    def test_phash_small_image(self):
+        self.check_small_image(self.func, self.image)
+
 
 if __name__ == '__main__':
     unittest.main()

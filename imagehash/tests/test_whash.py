@@ -51,8 +51,11 @@ class Test(unittest.TestCase):
                 imagehash.whash(self.image, image_scale=image_scale+1)
 
     def test_whash_small_image(self):
-        image_small = Image.open('data/small.jpg')
-        self.assertIsNotNone(imagehash.whash(image_small))
+        image_small = self._get_white_image((4, 9))
+        try:
+            imagehash.whash(image_small)
+        except Exception as e:
+            self.fail(e)
 
 
 if __name__ == '__main__':

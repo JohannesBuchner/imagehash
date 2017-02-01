@@ -10,7 +10,6 @@ import imagehash.tests as tests
 class Test(tests.TestImageHash):
     def setUp(self):
         self.image = self.get_data_image()
-        self.image_small = self.get_data_image('small.jpg')
         self.func = imagehash.average_hash
 
     def test_average_hash(self):
@@ -23,7 +22,7 @@ class Test(tests.TestImageHash):
         self.check_hash_stored(self.func, self.image)
 
     def test_average_hash_small_image(self):
-        self.assertIsNotNone(self.func(self.image_small))
+        self.check_small_image_hash_size(self.func, self.image)
 
 
 if __name__ == '__main__':

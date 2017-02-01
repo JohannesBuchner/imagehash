@@ -21,18 +21,25 @@ class Test(unittest.TestCase):
             hash = imagehash.whash(self.image, hash_size=hash_size)
             self.assertEqual(hash.hash.size, hash_size**2)
 
+    def test_hash_size_for_small_images(self):
+        default_hash_size = 8
+        for image_size in [(1, 25), (7, 5)]:
+            image = self._get_white_image(image_size)
+            hash = imagehash.whash(image)
+            self.assertEqual(hash.hash.size, default_hash_size**2)
+
     def test_hash_size_not_2power(self):
         emsg = 'hash_size is not power of 2'
         for hash_size in [3, 7, 12]:
             with six.assertRaisesRegex(self, AssertionError, emsg):
                 imagehash.whash(self.image, hash_size=hash_size)
 
-    def test_hash_size_is_less_than_image_size(self):
+    def test_hash_size_is_less_than_image_scale(self):
         image = self._get_white_image((120, 200))
         emsg = 'hash_size in a wrong range'
         for hash_size in [128, 512]:
             with six.assertRaisesRegex(self, AssertionError, emsg):
-                imagehash.whash(image, hash_size=hash_size)
+                imagehash.whash(image, hash_size=hash_size, image_scale=64)
 
     def test_custom_hash_size_and_scale(self):
         hash_size = 16

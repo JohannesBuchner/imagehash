@@ -1,5 +1,8 @@
 #!/usr/bin/env python
+from __future__ import (absolute_import, division, print_function)
 from PIL import Image
+import six
+
 import imagehash
 
 """
@@ -18,7 +21,7 @@ def find_similar_images(userpath, hashfunc = imagehash.average_hash):
     	hash = hashfunc(Image.open(img))
     	images[hash] = images.get(hash, []) + [img]
     
-    for k, img_list in images.iteritems():
+    for k, img_list in six.iteritems(images):
     	if len(img_list) > 1:
     		print(" ".join(img_list))
 

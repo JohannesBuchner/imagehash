@@ -42,7 +42,7 @@ Method:
 
 (C) Johannes Buchner, 2013
 """ % sys.argv[0])
-         sys.exit(1)
+        sys.exit(1)
     
     hashmethod = sys.argv[1] if len(sys.argv) > 1 else usage()
     if hashmethod == 'ahash':

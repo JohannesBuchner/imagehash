@@ -41,6 +41,10 @@ import os.path
 __version__ = open(os.path.join(os.path.abspath(
 	os.path.dirname(__file__)), 'VERSION')).read().strip()
 
+
+INT_TO_HEX = numpy.array([hex(i)[2:].rjust(2, '0') for i in range(256)])
+POWERS_OF_2 = 2 ** numpy.arange(8)
+
 def _binary_array_to_hex(arr):
 	"""
 	internal function to make a hex string out of a binary array.
@@ -50,15 +54,8 @@ def _binary_array_to_hex(arr):
 	If the pixel's value is less than the average it gets a 0 and if it's more it gets a 1.
 	Then we treat this like a string of bits and convert it to hexadecimal.
 	"""
-	h = 0
-	s = []
-	for i, v in enumerate(arr.flatten()):
-		if v: 
-			h += 2**(i % 8)
-		if (i % 8) == 7:
-			s.append(hex(h)[2:].rjust(2, '0'))
-			h = 0
-	return "".join(s)
+	i = numpy.sum(arr.reshape(arr.size // 8, 8) * POWERS_OF_2, axis=1)
+	return ''.join(INT_TO_HEX[i])
 
 
 class ImageHash(object):

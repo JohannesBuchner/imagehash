@@ -100,7 +100,7 @@ def hex_to_hash(hexstr):
 	binary_str = bin(int(hexstr, 16))[2:]
 	arr = numpy.asarray([x for x in reversed(binary_str)], dtype='u1').astype('?')
 	arr.resize(hash_size * hash_size)
-	arr = numpy.flip(arr, axis=0).reshape((hash_size, hash_size))
+	arr = numpy.flipud(arr).reshape((hash_size, hash_size))
 	return ImageHash(arr)
 
 def old_hex_to_hash(hexstr, hash_size=8):
@@ -195,7 +195,7 @@ def dhash(image, hash_size=8):
 	Difference Hash computation.
 
 	following http://www.hackerfactor.com/blog/index.php?/archives/529-Kind-of-Like-That.html
-	
+
 	computes differences horizontally
 
 	@image must be a PIL instance.
@@ -232,7 +232,7 @@ def dhash_vertical(image, hash_size=8):
 def whash(image, hash_size = 8, image_scale = None, mode = 'haar', remove_max_haar_ll = True):
 	"""
 	Wavelet Hash computation.
-	
+
 	based on https://www.kaggle.com/c/avito-duplicate-ads-detection/
 
 	@image must be a PIL instance.
@@ -276,4 +276,3 @@ def whash(image, hash_size = 8, image_scale = None, mode = 'haar', remove_max_ha
 	med = numpy.median(dwt_low)
 	diff = dwt_low > med
 	return ImageHash(diff)
-

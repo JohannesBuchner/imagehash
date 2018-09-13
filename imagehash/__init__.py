@@ -134,6 +134,8 @@ def average_hash(image, hash_size=8):
 	"""
 	if hash_size < 2:
 		raise ValueError("Hash size must be greater than or equal to 2")
+	if type(image) == str:
+		image = Image.open(image)
 
 	# reduce size and complexity, then covert to grayscale
 	image = image.convert("L").resize((hash_size, hash_size), Image.ANTIALIAS)
@@ -158,6 +160,8 @@ def phash(image, hash_size=8, highfreq_factor=4):
 	"""
 	if hash_size < 2:
 		raise ValueError("Hash size must be greater than or equal to 2")
+	if type(image) == str:
+		image = Image.open(image)
 
 	import scipy.fftpack
 	img_size = hash_size * highfreq_factor
@@ -178,6 +182,8 @@ def phash_simple(image, hash_size=8, highfreq_factor=4):
 
 	@image must be a PIL instance.
 	"""
+	if type(image) == str:
+		image = Image.open(image)
 	import scipy.fftpack
 	img_size = hash_size * highfreq_factor
 	image = image.convert("L").resize((img_size, img_size), Image.ANTIALIAS)
@@ -202,6 +208,8 @@ def dhash(image, hash_size=8):
 	# resize(w, h), but numpy.array((h, w))
 	if hash_size < 2:
 		raise ValueError("Hash size must be greater than or equal to 2")
+	if type(image) == str:
+		image = Image.open(image)
 
 	image = image.convert("L").resize((hash_size + 1, hash_size), Image.ANTIALIAS)
 	pixels = numpy.asarray(image)
@@ -220,6 +228,8 @@ def dhash_vertical(image, hash_size=8):
 
 	@image must be a PIL instance.
 	"""
+	if type(image) == str:
+		image = Image.open(image)
 	# resize(w, h), but numpy.array((h, w))
 	image = image.convert("L").resize((hash_size, hash_size + 1), Image.ANTIALIAS)
 	pixels = numpy.asarray(image)
@@ -249,6 +259,8 @@ def whash(image, hash_size = 8, image_scale = None, mode = 'haar', remove_max_ha
 	else:
 		image_natural_scale = 2**int(numpy.log2(min(image.size)))
 		image_scale = max(image_natural_scale, hash_size)
+	if type(image) == str:
+		image = Image.open(image)
 
 	ll_max_level = int(numpy.log2(image_scale))
 

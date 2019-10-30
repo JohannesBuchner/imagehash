@@ -195,7 +195,6 @@ def dhash(image, hash_size=8):
 	Difference Hash computation.
 
 	following http://www.hackerfactor.com/blog/index.php?/archives/529-Kind-of-Like-That.html
-
 	computes differences horizontally
 
 	@image must be a PIL instance.
@@ -216,7 +215,6 @@ def dhash_vertical(image, hash_size=8):
 	Difference Hash computation.
 
 	following http://www.hackerfactor.com/blog/index.php?/archives/529-Kind-of-Like-That.html
-
 	computes differences vertically
 
 	@image must be a PIL instance.
@@ -276,3 +274,4 @@ def whash(image, hash_size = 8, image_scale = None, mode = 'haar', remove_max_ha
 	med = numpy.median(dwt_low)
 	diff = dwt_low > med
 	return ImageHash(diff)
+

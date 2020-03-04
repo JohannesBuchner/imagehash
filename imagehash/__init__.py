@@ -45,9 +45,9 @@ with open(os.path.join(os.path.abspath(
 
 def _binary_array_to_hex(arr):
 	"""
-	internal function to make a hex string out of a binary array.
+	internal function to make a hex string out of a numpy 2D bool array.
 	"""
-	bit_string = ''.join(str(b) for b in 1 * arr.flatten())
+	bit_string = arr.astype('u1').astype('S1').tostring()
 	width = int(numpy.ceil(len(bit_string)/4))
 	return '{:0>{width}x}'.format(int(bit_string, 2), width=width)
 
@@ -98,10 +98,11 @@ def hex_to_hash(hexstr):
 	2. This algorithm does not work for hash_size < 2.
 	"""
 	hash_size = int(numpy.sqrt(len(hexstr)*4))
-	binary_array = '{:0>{width}b}'.format(int(hexstr, 16), width = hash_size * hash_size)
-	bit_rows = [binary_array[i:i+hash_size] for i in range(0, len(binary_array), hash_size)]
-	hash_array = numpy.array([[bool(int(d)) for d in row] for row in bit_rows])
-	return ImageHash(hash_array)
+	binary_str = bin(int(hexstr, 16))[2:]
+	arr = numpy.asarray([x for x in reversed(binary_str)], dtype='u1').astype('?')
+	arr.resize(hash_size * hash_size)
+	arr = numpy.flipud(arr).reshape((hash_size, hash_size))
+	return ImageHash(arr)
 
 def old_hex_to_hash(hexstr, hash_size=8):
 	"""
@@ -195,7 +196,6 @@ def dhash(image, hash_size=8):
 	Difference Hash computation.
 
 	following http://www.hackerfactor.com/blog/index.php?/archives/529-Kind-of-Like-That.html
-	
 	computes differences horizontally
 
 	@image must be a PIL instance.
@@ -216,7 +216,6 @@ def dhash_vertical(image, hash_size=8):
 	Difference Hash computation.
 
 	following http://www.hackerfactor.com/blog/index.php?/archives/529-Kind-of-Like-That.html
-
 	computes differences vertically
 
 	@image must be a PIL instance.
@@ -232,7 +231,7 @@ def dhash_vertical(image, hash_size=8):
 def whash(image, hash_size = 8, image_scale = None, mode = 'haar', remove_max_haar_ll = True):
 	"""
 	Wavelet Hash computation.
-	
+
 	based on https://www.kaggle.com/c/avito-duplicate-ads-detection/
 
 	@image must be a PIL instance.

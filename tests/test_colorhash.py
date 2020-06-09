@@ -11,6 +11,9 @@ class Test(TestImageHash):
         self.image = self.get_data_image()
         self.func = imagehash.colorhash
 
+    def tearDown(self):
+        self.image.close()
+
     def test_colorhash(self):
         self.check_hash_algorithm(self.func, self.image)
 
@@ -63,6 +66,33 @@ class Test(TestImageHash):
             with self.assertRaises(ValueError):
                 func(image, bit)
 
+    def test_colorhash_icc_support(self):
+        image = self.get_data_image('bigbuckbunny.png')
+        image_with_icc = self.get_data_image('bigbuckbunny-with-diff-icc.png')
+        with image, image_with_icc:
+            self.check_icc_support(self.func, image, image_with_icc)
+
+    def check_icc_support(self, func, orig_image, image_with_diff_icc):
+        orig_data_hash = func(orig_image)
+        diff_icc_hash = func(image_with_diff_icc)
+        emsg = ('same image data but with a different ICC profile should '
+                'result in different hashes: {} == {}'.format(orig_data_hash,
+                                                              diff_icc_hash))
+        self.assertNotEqual(orig_data_hash, diff_icc_hash, emsg)
+
+    def test_colorhash_icc_ignored(self):
+        image = self.get_data_image('bigbuckbunny.png')
+        image_with_icc = self.get_data_image('bigbuckbunny-with-diff-icc.png')
+        with image, image_with_icc:
+            self.check_icc_ignored(self.func, image, image_with_icc)
+
+    def check_icc_ignored(self, func, orig_image, image_with_diff_icc):
+        orig_data_hash = func(orig_image)
+        diff_icc_hash = func(image_with_diff_icc, ignore_icc=True)
+        emsg = ('ignoring the ICC profile in an image with the same image '
+                'data as one without a profile should result in the same hash: '
+                '{} != {}'.format(orig_data_hash, diff_icc_hash))
+        self.assertEqual(orig_data_hash, diff_icc_hash, emsg)
 
 if __name__ == '__main__':
     unittest.main()

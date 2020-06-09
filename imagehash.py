@@ -31,10 +31,11 @@ Rotation by 26: 21 Hamming difference
 
 from __future__ import (absolute_import, division, print_function)
 
-from PIL import Image
 import numpy
-#import scipy.fftpack
 #import pywt
+#import scipy.fftpack
+from PIL import Image, ImageCms
+
 __version__ = "4.1.0"
 
 """
@@ -270,7 +271,7 @@ def dhash_vertical(image, hash_size=8):
 	return ImageHash(diff)
 
 
-def whash(image, hash_size = 8, image_scale = None, mode = 'haar', remove_max_haar_ll = True):
+def whash(image, hash_size=8, image_scale=None, mode='haar', remove_max_haar_ll=True):
 	"""
 	Wavelet Hash computation.
 	
@@ -320,7 +321,7 @@ def whash(image, hash_size = 8, image_scale = None, mode = 'haar', remove_max_ha
 
 
 
-def colorhash(image, binbits=3):
+def colorhash(image, binbits=3, ignore_icc=False):
 	"""
 	Color Hash computation.
 
@@ -332,11 +333,23 @@ def colorhash(image, binbits=3):
 	* the next 6*binbits encode the fraction in 6 bins of saturation, for mildly saturated parts of the remaining image
 
 	@binbits number of bits to use to encode each pixel fractions
+	@ignore_icc use raw color values, ignoring embedded ICC profiles
 	"""
+
+	if not ignore_icc:
+		image_profile = image.info.get("icc_profile")
+		if image_profile:
+			from io import BytesIO
+			# standardize color space to sRGB and preserve relative
+			# color values by using perceptual rendering intent
+			srgb_profile = ImageCms.createProfile("sRGB")
+			image_profile = ImageCms.ImageCmsProfile(BytesIO(image_profile))
+			ImageCms.profileToProfile(image, image_profile, srgb_profile,
+				renderingIntent=ImageCms.INTENT_PERCEPTUAL, inPlace=True)
 
 	# bin in hsv space:
 	intensity = numpy.asarray(image.convert("L")).flatten()
-	h, s, v = [numpy.asarray(v).flatten() for v in image.convert("HSV").split()]
+	h, s, _ = [numpy.asarray(v).flatten() for v in image.convert("HSV").split()]
 	# black bin
 	mask_black = intensity < 256 // 8
 	frac_black = mask_black.mean()

@@ -38,12 +38,17 @@ install:
   - conda install --quiet --file conda-requirements.txt
   - pip install coveralls
 
+  # Work around conda's Pillow package lacking ImageCms
+  - conda uninstall pillow
+  - pip install pillow
+
   # Summerise environment
   # ---------------------
   - conda list
   - conda info -a
 
   # Install and test imagehash
+  # --------------------------
   - python setup.py install
 
 script:

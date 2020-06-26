@@ -72,15 +72,6 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 """
 
 
-def _binary_array_to_hex(arr):
-	"""
-	internal function to make a hex string out of a binary array.
-	"""
-	bit_string = ''.join(str(b) for b in 1 * arr.flatten())
-	width = int(numpy.ceil(len(bit_string)/4))
-	return '{:0>{width}x}'.format(int(bit_string, 2), width=width)
-
-
 class ImageHash(object):
 	"""
 	Hash encapsulation. Can be used for dictionary keys and comparisons.
@@ -89,7 +80,12 @@ class ImageHash(object):
 		self.hash = binary_array
 
 	def __str__(self):
-		return _binary_array_to_hex(self.hash.flatten())
+		hash_int = 0
+
+		for bit in map(int, numpy.nditer(self.hash)):
+			hash_int = hash_int << 1 | bit
+
+		return f"{hash_int:x}"
 
 	def __repr__(self):
 		return repr(self.hash)

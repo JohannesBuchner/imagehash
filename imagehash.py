@@ -91,7 +91,7 @@ class ImageHash(object):
 		self.hash = binary_array
 
 	def __str__(self):
-		_binary_array_to_hex(self.hash)
+		return _binary_array_to_hex(self.hash)
 
 	def __repr__(self):
 		return repr(self.hash)

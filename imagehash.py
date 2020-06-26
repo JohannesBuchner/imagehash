@@ -73,14 +73,16 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 def _binary_array_to_hex(arr):
 	"""
-	Convert a 2D binary array of bools to a hex string.
+	Encode a 2D ndarray of bools as a hex string.
 	"""
 	hash_int = 0
-
 	for bit in map(int, numpy.nditer(arr)):
 		hash_int = hash_int << 1 | bit
 
-	return "{:x}".format(hash_int)
+	q, mod = divmod(arr.size, 4)
+	width = q + int(mod != 0) # account for leading zeroes
+	
+	return "{:0>{width}x}".format(hash_int, width=width)
 
 
 class ImageHash(object):

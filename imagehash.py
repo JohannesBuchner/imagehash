@@ -71,6 +71,17 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
 
+def _binary_array_to_hex(arr):
+	"""
+	Convert a 2D binary array of bools to a hex string.
+	"""
+	hash_int = 0
+
+	for bit in map(int, numpy.nditer(arr)):
+		hash_int = hash_int << 1 | bit
+
+	return "{:x}".format(hash_int)
+
 
 class ImageHash(object):
 	"""
@@ -80,12 +91,7 @@ class ImageHash(object):
 		self.hash = binary_array
 
 	def __str__(self):
-		hash_int = 0
-
-		for bit in map(int, numpy.nditer(self.hash)):
-			hash_int = hash_int << 1 | bit
-
-		return f"{hash_int:x}"
+		_binary_array_to_hex(self.hash)
 
 	def __repr__(self):
 		return repr(self.hash)

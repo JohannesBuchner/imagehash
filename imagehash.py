@@ -216,6 +216,29 @@ def phash(image, hash_size=8, highfreq_factor=4):
 	return ImageHash(diff)
 
 
+def phash_faster(self, image, hash_size=8, highfreq_factor=4):
+        """
+	Perceptual Hash computation.
+
+	Implementation follows http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html
+
+	@image must be a Numpy array/OpenCV instance.
+	"""
+        if hash_size < 2:
+            raise ValueError("Hash size must be greater than or equal to 2")
+
+        import scipy.fft
+        import cv2
+        img_size = hash_size * highfreq_factor
+        image = cv2.cvtColor(image, cv2.COLOR_RGB2GRAY)
+        image = cv2.resize(image, (img_size, img_size), interpolation=cv2.INTER_LINEAR)
+        dct = scipy.fft.dct(scipy.fft.dct(image, axis=0), axis=1)
+        dctlowfreq = dct[:hash_size, :hash_size]
+        med = np.median(dctlowfreq)
+        diff = dctlowfreq > med
+        return ImageHash(diff)
+
+
 def phash_simple(image, hash_size=8, highfreq_factor=4):
 	"""
 	Perceptual Hash computation.

@@ -1,4 +1,3 @@
-six
 pillow
 numpy
 scipy

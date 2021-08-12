@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 from __future__ import (absolute_import, division, print_function)
 from PIL import Image
-import six
 
 import imagehash
 
@@ -30,11 +29,6 @@ def find_similar_images(userpaths, hashfunc = imagehash.average_hash):
             if 'dupPictures' in img:
                 print('rm -v', img)
         images[hash] = images.get(hash, []) + [img]
-    
-    #for k, img_list in six.iteritems(images):
-    #    if len(img_list) > 1:
-    #        print(" ".join(img_list))
-
 
 if __name__ == '__main__':
     import sys, os
@@ -75,5 +69,3 @@ Method:
         usage()
     userpaths = sys.argv[2:] if len(sys.argv) > 2 else "."
     find_similar_images(userpaths=userpaths, hashfunc=hashfunc)
-    
-

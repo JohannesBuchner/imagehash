@@ -71,14 +71,18 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 """
 
-
 def _binary_array_to_hex(arr):
 	"""
-	internal function to make a hex string out of a binary array.
+	Encode a 2D ndarray of bools as a hex string.
 	"""
-	bit_string = ''.join(str(b) for b in 1 * arr.flatten())
-	width = int(numpy.ceil(len(bit_string)/4))
-	return '{:0>{width}x}'.format(int(bit_string, 2), width=width)
+	hash_int = 0
+	for bit in map(int, numpy.nditer(arr)):
+		hash_int = hash_int << 1 | bit
+
+	q, mod = divmod(arr.size, 4)
+	width = q + int(mod != 0) # account for leading zeroes
+	
+	return "{:0>{width}x}".format(hash_int, width=width)
 
 
 class ImageHash(object):
@@ -89,7 +93,7 @@ class ImageHash(object):
 		self.hash = binary_array
 
 	def __str__(self):
-		return _binary_array_to_hex(self.hash.flatten())
+		return _binary_array_to_hex(self.hash)
 
 	def __repr__(self):
 		return repr(self.hash)

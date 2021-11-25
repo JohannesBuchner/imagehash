@@ -21,7 +21,8 @@ def find_similar_images(userpaths, hashfunc = imagehash.average_hash):
     images = {}
     for img in sorted(image_filenames):
         try:
-            hash = hashfunc(Image.open(img))
+            with Image.open(img) as i:
+                hash = hashfunc(i)
         except Exception as e:
             print('Problem:', e, 'with', img)
             continue

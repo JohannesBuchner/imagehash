@@ -492,7 +492,7 @@ def _find_region(remaining_pixels, segmented_pixels):
 			]
 			try_next.update(neighbours)
 		# Remove pixels we have already seen
-		try_next.difference_update(segmented_pixels, not_in_region)
+		try_next = {x for x in try_next if x not in segmented_pixels and x not in not_in_region}
 		# If there's no more pixels to try, the region is complete
 		if not try_next:
 			break

@@ -88,6 +88,10 @@ class ImageHash(object):
 	def __init__(self, binary_array):
 		self.hash = binary_array
 
+	@classmethod
+	def from_str(cls, b16str):
+		return cls(numpy.array([int(c) for c in bin(int(b16str, 16))[2:].zfill(len(b16str) * 4)]))
+
 	def __str__(self):
 		return _binary_array_to_hex(self.hash.flatten())
 

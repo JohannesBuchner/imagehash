@@ -86,6 +86,8 @@ class ImageHash(object):
 	Hash encapsulation. Can be used for dictionary keys and comparisons.
 	"""
 	def __init__(self, binary_array):
+		if isinstance(binary_array, str):
+			binary_array = np.array([int(c) for c in bin(int(binary_array, 16))[2:]])
 		self.hash = binary_array
 
 	def __str__(self):

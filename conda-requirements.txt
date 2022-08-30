@@ -1,5 +1,5 @@
 six
-pillow
+pillow>=9.1.0
 numpy
 scipy
 pywavelets

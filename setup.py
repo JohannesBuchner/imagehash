@@ -28,7 +28,7 @@ setup(
         "six",
         "numpy",
         "scipy",       # for phash
-        "pillow",      # or PIL
+        "pillow>=9.1.0",      # or PIL
         "PyWavelets",  # for whash
     ],
     test_suite='tests',

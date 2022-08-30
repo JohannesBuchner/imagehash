@@ -24,7 +24,7 @@ RAINBOW = [
 full_image = Image.open(IMAGE_FILE)
 width, height = full_image.size
 # Image pre-processing
-image = full_image.convert("L").resize((IMG_SIZE, IMG_SIZE), Image.ANTIALIAS)
+image = full_image.convert("L").resize((IMG_SIZE, IMG_SIZE), Image.Resampling.LANCZOS)
 # Add filters
 image = image.filter(ImageFilter.GaussianBlur()).filter(ImageFilter.MedianFilter())
 pixels = numpy.array(image).astype(numpy.float32)

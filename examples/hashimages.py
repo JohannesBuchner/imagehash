@@ -32,7 +32,7 @@ def image_loader(hashfunc, hash_size=8):
 def with_ztransform_preprocess(hashfunc, hash_size=8):
     def function(path):
         image = alpharemover(Image.open(path))
-        image = image.convert("L").resize((hash_size, hash_size), Image.ANTIALIAS)
+        image = image.convert("L").resize((hash_size, hash_size), Image.Resampling.LANCZOS)
         data = image.getdata()
         quantiles = np.arange(100)
         quantiles_values = np.percentile(data, quantiles)

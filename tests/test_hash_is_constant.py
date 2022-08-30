@@ -84,7 +84,7 @@ class Test(TestImageHash):
 			known_bw_md5,
 			"This hash should match, unless pillow have changed Convert('L') again"
 		)
-		image = image.resize((300, 300), Image.ANTIALIAS)
+		image = image.resize((300, 300), Image.Resampling.LANCZOS)
 		# Add filters
 		image = image.filter(ImageFilter.GaussianBlur()).filter(ImageFilter.MedianFilter())
 		pixels = numpy.array(image).astype(numpy.float32)

@@ -300,6 +300,77 @@ def phash_simple(image, hash_size=8, highfreq_factor=4):
 	return ImageHash(diff)
 
 
+def _aspect_u8_dct(array):
+	"""This implements the variant of DCT used within ``Aspect`` tool"""
+	array2 = numpy.zeros(len(array), dtype=numpy.complex)
+	for i in range(len(array)):
+		j = i // 2
+		if (i % 2) != 0:
+			j = (len(array) - 1) - j
+
+		array2[j] = array[i]
+
+	import scipy.fftpack
+
+	return numpy.real(scipy.fftpack.fft(array2)).astype(numpy.uint8)
+
+
+def _aspect_check_preprocess_params(hash_size=16):
+	block_size = 4
+	fft_size = block_size * hash_size
+	single_dim_size = numpy.sqrt(fft_size)
+	if not single_dim_size.is_integer():
+		raise ValueError("Invalid hash size. It must be a square.")
+	single_dim_size = int(single_dim_size)
+	return block_size, fft_size, single_dim_size
+
+
+def _aspect_block_average(img, single_dim_size):
+	"""This implements computation of unflattened ``data2`` array within ``Aspect`` tool."""
+	img = numpy.array(img.convert("LA"), dtype=numpy.uint8) / 255.0
+	data = img[:, :, 0] * img[:, :, 1]
+
+	data2 = numpy.ones((single_dim_size, single_dim_size), dtype=numpy.double) * 0.5
+	single_dim_size_minus_1 = single_dim_size - 1
+
+	blockMapY, blockMapX = (numpy.round(single_dim_size_minus_1 * numpy.arange(sz) / sz).astype(numpy.uint8) for sz in data.shape)
+
+	for si, row in zip(blockMapY, data):
+		for sj, px in zip(blockMapX, row):
+			data2[si, sj] = (data2[si, sj] + px) / 2.0
+
+	return data2
+
+
+def _aspect_fold(array, hash_size, block_size):
+	"""This implements computation of the hash from DCT of flattened ``data2`` array within ``Aspect`` tool."""
+	out = numpy.ones(hash_size, dtype=numpy.uint8) * len(array)
+
+	for j in range(block_size):
+		idx1 = j * block_size
+		idx2 = 2 * idx1
+		out[idx1: idx1 + block_size] += array[idx2: idx2 + block_size]
+
+	return out
+
+
+def aspect_phash(img, hash_size=16):
+	# type: (Image.Image, int) -> ImageHash
+	"""
+	This implements the hash approximately equal to the hash produced by ``https://github.com/Naranbataar/Aspect``
+	tool by Andre Augusto, licensed under Unlicense license.
+
+	@image must be a PIL instance.
+	"""
+
+	block_size, fft_size, single_dim_size = _aspect_check_preprocess_params(hash_size)
+	return ImageHash(_aspect_fold(
+		_aspect_u8_dct(_aspect_block_average(img, single_dim_size).flatten()),
+		hash_size,
+		block_size,
+	))
+
+
 def dhash(image, hash_size=8):
 	# type: (Image.Image, int) -> ImageHash
 	"""

@@ -54,8 +54,10 @@ jobs:
       - name: Check typing with mypy
         if: ${{ !((matrix.python-version == '2.7') || (matrix.python-version == '3.5')) }}
         run: mypy imagehash tests/*.py --follow-imports=silent --ignore-missing-imports || true
-      - name: Test install from setup.py
-        run: pip install .
+      - name: build wheel
+        run: python3 -m build -nwx .
+      - name: Install the built wheel
+        run: pip install --upgrade ./dist/*.whl
       - run: coverage run -m pytest .
       - name: Convert coverage output to lcov for coveralls
         # coverage-lcov requires python 3.6, so we cannot upload results

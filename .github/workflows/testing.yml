@@ -37,6 +37,9 @@ jobs:
         if: ${{ !((matrix.python-version == '2.7') || (matrix.python-version == '3.5')) }}
         run: |
           conda install -c anaconda -c conda-forge --file requirements-linting-old.txt coverage-lcov mypy types-six typed-ast
+      - name: install build dependencies
+        if: ${{ !((matrix.python-version == '2.7') || (matrix.python-version == '3.5')) }}
+        run: pip install --upgrade pip setuptools build
       - name: Preinstall dependencies (Python 2.7) from anaconda
         if: ${{ matrix.python-version == '2.7' }}
         run: |
@@ -55,10 +58,12 @@ jobs:
         if: ${{ !((matrix.python-version == '2.7') || (matrix.python-version == '3.5')) }}
         run: mypy imagehash tests/*.py --follow-imports=silent --ignore-missing-imports || true
       - name: build wheel
+        if: ${{ !((matrix.python-version == '2.7') || (matrix.python-version == '3.5')) }}
         run: python3 -m build -nwx .
       - name: Install the built wheel
+        if: ${{ !((matrix.python-version == '2.7') || (matrix.python-version == '3.5')) }}
         run: pip install --upgrade ./dist/*.whl
-      - run: coverage run -m pytest .
+      - run: coverage run -m pytest ./tests
       - name: Convert coverage output to lcov for coveralls
         # coverage-lcov requires python 3.6, so we cannot upload results
         # from python 2 and 3.5 builds :-(

@@ -1,3 +1,29 @@
 [build-system]
-requires = ["setuptools>=42.2"]
+requires = ["setuptools>=61.2"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "ImageHash"
+version = "4.3.0"
+authors = [{name = "Johannes Buchner", email = "buchner.johannes@gmx.at"}]
+license = {text = "BSD-2-Clause"}
+description = "Image Hashing library"
+readme = "README.rst"
+dependencies = ["numpy", "scipy", "pillow", "PyWavelets"]
+
+[project.urls]
+Homepage = "https://github.com/JohannesBuchner/imagehash"
+
+[project.optional-dependencies]
+testing = ["pytest>=3"]
+
+[tool.setuptools]
+packages = ["imagehash"]
+script-files = ["find_similar_images.py"]
+include-package-data = true
+
+[tool.setuptools.package-data]
+imagehash = ["py.typed"]
+
+[tool.distutils.bdist_wheel]
+universal = 1

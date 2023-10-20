@@ -266,10 +266,14 @@ def phash(image, hash_size=8, highfreq_factor=4):
 
 	@image must be a PIL instance.
 	"""
+	try:
+		import scipy.fftpack
+	except (ModuleNotFoundError) as e:
+		raise ModuleNotFoundError(f"{e.msg}. Did you forget to install scipy?") from e
+
 	if hash_size < 2:
 		raise ValueError('Hash size must be greater than or equal to 2')
 
-	import scipy.fftpack
 	img_size = hash_size * highfreq_factor
 	image = image.convert('L').resize((img_size, img_size), ANTIALIAS)
 	pixels = numpy.asarray(image)
@@ -289,7 +293,11 @@ def phash_simple(image, hash_size=8, highfreq_factor=4):
 
 	@image must be a PIL instance.
 	"""
-	import scipy.fftpack
+	try:
+		import scipy.fftpack
+	except (ModuleNotFoundError) as e:
+		raise ModuleNotFoundError(f"{e.msg}. Did you forget to install scipy?") from e
+
 	img_size = hash_size * highfreq_factor
 	image = image.convert('L').resize((img_size, img_size), ANTIALIAS)
 	pixels = numpy.asarray(image)
@@ -357,7 +365,11 @@ def whash(image, hash_size=8, image_scale=None, mode='haar', remove_max_haar_ll=
 					'db4' - Daubechies wavelets
 	@remove_max_haar_ll - remove the lowest low level (LL) frequency using Haar wavelet.
 	"""
-	import pywt
+	try:
+		import pywt
+	except (ModuleNotFoundError) as e:
+		raise ModuleNotFoundError(f"{e.msg}. Did you forget to install PyWavelets?") from e
+
 	if image_scale is not None:
 		assert image_scale & (image_scale - 1) == 0, 'image_scale is not power of 2'
 	else:

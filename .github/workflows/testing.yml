@@ -40,7 +40,7 @@ jobs:
         run: ln -sf /usr/lib/x86_64-linux-gnu/libstdc++.so.6 /usr/share/miniconda/envs/test/lib/libstdc++.so.6
       - name: Install testing dependencies
         run: |
-          conda install -c conda-forge --file requirements-conda.txt --file requirements-linting-old.txt six packaging pytest coveralls coverage libstdcxx-ng
+          conda install -c conda-forge --file requirements-conda.txt --file requirements-linting-old.txt packaging pytest coveralls coverage libstdcxx-ng
           pip install git+https://github.com/JohannesBuchner/coverage-lcov
       - name: Conda info
         run: |

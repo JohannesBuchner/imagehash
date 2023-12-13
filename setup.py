@@ -26,12 +26,10 @@ setup(
 	long_description_content_type='text/x-rst',
 	install_requires=[
 		'numpy',
+		'scipy',		# for phash
+		'pillow',		# or PIL
+		'PyWavelets',  # for whash
 		'pillow',	# or PIL
-	],
-	extras_require={
-        "whash": "PyWavelets",	# for whash
-		'phash': "scipy",		# for phash
-    },
 	test_suite='tests',
 	tests_require=['pytest>=3'],
 )

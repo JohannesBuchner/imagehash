@@ -60,14 +60,14 @@ def average_hash(video, hash_size=8, mean=numpy.mean, frames_quantity=8):
     @mean how to determine the average luminescence. can try numpy.median instead.
     @frames_quantity split the video into a certain number of frames
     """
-
-    hash_result = VideoHash(numpy.zeros((hash_size, hash_size), dtype=bool))
+    hashed_frames = []
 
     # Hash all frames
     for frame in _get_frames(video, frames_quantity):
         image_hash = imagehash.average_hash(frame, hash_size)
-        hash_result.hash = hash_result.hash ^ image_hash.hash
-    return hash_result
+        hashed_frames.append(image_hash.hash)
+
+    return VideoHash(numpy.array(hashed_frames))
 
 
 def phash(video, hash_size=8, highfreq_factor=4, frames_quantity=8):
@@ -80,14 +80,14 @@ def phash(video, hash_size=8, highfreq_factor=4, frames_quantity=8):
     @video must be a cv2.VideoCapture instance.
     @frames_quantity split the video into a certain number of frames
     """
-
-    hash_result = VideoHash(numpy.zeros((hash_size, hash_size), dtype=bool))
+    hashed_frames = []
 
     # Hash all frames
     for frame in _get_frames(video, frames_quantity):
         image_hash = imagehash.phash(frame, hash_size, highfreq_factor)
-        hash_result.hash = hash_result.hash ^ image_hash.hash
-    return hash_result
+        hashed_frames.append(image_hash.hash)
+
+    return VideoHash(numpy.array(hashed_frames))
 
 
 def phash_simple(video, hash_size=8, highfreq_factor=4, frames_quantity=8):
@@ -100,14 +100,14 @@ def phash_simple(video, hash_size=8, highfreq_factor=4, frames_quantity=8):
     @video must be a cv2.VideoCapture instance.
     @frames_quantity split the video into a certain number of frames
     """
-
-    hash_result = VideoHash(numpy.zeros((hash_size, hash_size), dtype=bool))
+    hashed_frames = []
 
     # Hash all frames
     for frame in _get_frames(video, frames_quantity):
         image_hash = imagehash.phash_simple(frame, hash_size, highfreq_factor)
-        hash_result.hash = hash_result.hash ^ image_hash.hash
-    return hash_result
+        hashed_frames.append(image_hash.hash)
+
+    return VideoHash(numpy.array(hashed_frames))
 
 
 def dhash(video, hash_size=8, frames_quantity=8):
@@ -122,14 +122,14 @@ def dhash(video, hash_size=8, frames_quantity=8):
     @video must be a cv2.VideoCapture instance.
     @frames_quantity split the video into a certain number of frames
     """
-
-    hash_result = VideoHash(numpy.zeros((hash_size, hash_size), dtype=bool))
+    hashed_frames = []
 
     # Hash all frames
     for frame in _get_frames(video, frames_quantity):
         image_hash = imagehash.dhash(frame, hash_size)
-        hash_result.hash = hash_result.hash ^ image_hash.hash
-    return hash_result
+        hashed_frames.append(image_hash.hash)
+
+    return VideoHash(numpy.array(hashed_frames))
 
 
 def dhash_vertical(video, hash_size=8, frames_quantity=8):
@@ -144,13 +144,14 @@ def dhash_vertical(video, hash_size=8, frames_quantity=8):
     @video must be a cv2.VideoCapture instance.
     @frames_quantity split the video into a certain number of frames
     """
-    hash_result = VideoHash(numpy.zeros((hash_size, hash_size), dtype=bool))
+    hashed_frames = []
 
     # Hash all frames
     for frame in _get_frames(video, frames_quantity):
-        image_hash = imagehash.dhash(frame, hash_size)
-        hash_result.hash = hash_result.hash ^ image_hash.hash
-    return hash_result
+        image_hash = imagehash.dhash_vertical(frame, hash_size)
+        hashed_frames.append(image_hash.hash)
+
+    return VideoHash(numpy.array(hashed_frames))
 
 
 def whash(video, hash_size=8, image_scale=None, mode="haar", remove_max_haar_ll=True, frames_quantity=8):
@@ -170,13 +171,14 @@ def whash(video, hash_size=8, image_scale=None, mode="haar", remove_max_haar_ll=
     @remove_max_haar_ll - remove the lowest low level (LL) frequency using Haar wavelet.
     @frames_quantity split the video into a certain number of frames
     """
-    hash_result = VideoHash(numpy.zeros((hash_size, hash_size), dtype=bool))
+    hashed_frames = []
 
     # Hash all frames
     for frame in _get_frames(video, frames_quantity):
         image_hash = imagehash.whash(frame, hash_size, image_scale, mode, remove_max_haar_ll)
-        hash_result.hash = hash_result.hash ^ image_hash.hash
-    return hash_result
+        hashed_frames.append(image_hash.hash)
+
+    return VideoHash(numpy.array(hashed_frames))
 
 
 def colorhash(video, binbits=3, frames_quantity=8):
@@ -195,10 +197,11 @@ def colorhash(video, binbits=3, frames_quantity=8):
     @binbits number of bits to use to encode each pixel fractions
     @frames_quantity split the video into a certain number of frames
     """
-    hash_result = VideoHash(numpy.zeros((), dtype=bool))
+    hashed_frames = []
 
     # Hash all frames
     for frame in _get_frames(video, frames_quantity):
         image_hash = imagehash.colorhash(frame, binbits)
-        hash_result.hash = hash_result.hash ^ image_hash.hash
-    return hash_result
+        hashed_frames.append(image_hash.hash)
+
+    return VideoHash(numpy.array(hashed_frames))

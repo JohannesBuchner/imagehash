@@ -270,11 +270,11 @@ def phash(image, hash_size=8, highfreq_factor=4):
 	if hash_size < 2:
 		raise ValueError('Hash size must be greater than or equal to 2')
 
-	import scipy.fftpack
+	import scipy.fft
 	img_size = hash_size * highfreq_factor
 	image = image.convert('L').resize((img_size, img_size), ANTIALIAS)
 	pixels = numpy.asarray(image)
-	dct = scipy.fftpack.dct(scipy.fftpack.dct(pixels, axis=0), axis=1)
+	dct = scipy.fft.dct(scipy.fft.dct(pixels, axis=0), axis=1)
 	dctlowfreq = dct[:hash_size, :hash_size]
 	med = numpy.median(dctlowfreq)
 	diff = dctlowfreq > med
@@ -290,11 +290,11 @@ def phash_simple(image, hash_size=8, highfreq_factor=4):
 
 	@image must be a PIL instance.
 	"""
-	import scipy.fftpack
+	import scipy.fft
 	img_size = hash_size * highfreq_factor
 	image = image.convert('L').resize((img_size, img_size), ANTIALIAS)
 	pixels = numpy.asarray(image)
-	dct = scipy.fftpack.dct(pixels)
+	dct = scipy.fft.dct(pixels)
 	dctlowfreq = dct[:hash_size, 1:hash_size + 1]
 	avg = dctlowfreq.mean()
 	diff = dctlowfreq > avg

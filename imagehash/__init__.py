@@ -438,7 +438,7 @@ def colorhash(image, binbits=3):
 	maxvalue = 2**binbits
 	values = [min(maxvalue - 1, int(frac_black * maxvalue)), min(maxvalue - 1, int(frac_gray * maxvalue))]
 	for counts in list(h_faint_counts) + list(h_bright_counts):
-		values.append(min(maxvalue - 1, int(counts * maxvalue * 1. / c)))
+		values.append(min(maxvalue - 1, int(counts) * maxvalue * 1. / c))
 	# print(values)
 	bitarray = []
 	for v in values:

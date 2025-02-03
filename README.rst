@@ -30,7 +30,7 @@ black & gray fractions (without position information).
 Installation
 ============
 
-Based on PIL/Pillow Image, numpy and scipy.fftpack (for pHash)
+Based on PIL/Pillow Image, numpy and scipy.fft (for pHash)
 Easy installation through `pypi`_::
 
 	pip install imagehash

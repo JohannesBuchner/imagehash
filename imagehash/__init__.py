@@ -97,6 +97,12 @@ class ImageHash:
 		# type: (NDArray) -> None
 		self.hash = binary_array  # type: NDArray
 
+	def __bytes__(self):
+		return numpy.packbits(self.hash).tobytes()
+
+	def __int__(self):
+		return int.from_bytes(bytes(self), byteorder='big', signed=True)
+
 	def __str__(self):
 		return _binary_array_to_hex(self.hash.flatten())
 

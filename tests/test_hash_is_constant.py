@@ -41,27 +41,47 @@ class Test(TestImageHash):
 	def test_average_hash(self):
 		result_hash = imagehash.average_hash(self.image)
 		known_hash = 'ffd7918181c9ffff'
+		known_bytes = b'\xff\xd7\x91\x81\x81\xc9\xff\xff'
+		known_bigint = -11380488630829057
 		self.assertEqual(str(result_hash), known_hash)
+		self.assertEqual(bytes(result_hash), known_bytes)
+		self.assertEqual(int(result_hash), known_bigint)
 
 	def test_phash(self):
 		result_hash = imagehash.phash(self.image)
 		known_hash = 'ba8c84536bd3c366'
+		known_bytes = b'\xba\x8c\x84\x53\x6b\xd3\xc3\x66'
+		known_bigint = -5004479592089271450
 		self.assertEqual(str(result_hash), known_hash)
+		self.assertEqual(bytes(result_hash), known_bytes)
+		self.assertEqual(int(result_hash), known_bigint)
 
 	def test_dhash(self):
 		result_hash = imagehash.dhash(self.image)
 		known_hash = '0026273b2b19550e'
+		known_bytes = b'\x00\x26\x27\x3b\x2b\x19\x55\x0e'
+		known_bigint = 10739184194639118
 		self.assertEqual(str(result_hash), known_hash)
+		self.assertEqual(bytes(result_hash), known_bytes)
+		self.assertEqual(int(result_hash), known_bigint)
 
 	def test_whash(self):
 		result_hash = imagehash.whash(self.image)
 		known_hash = 'ffd391818181a5e7'
+		known_bytes = b'\xff\xd3\x91\x81\x81\x81\xa5\xe7'
+		known_bigint = -12506388542413337
 		self.assertEqual(str(result_hash), known_hash)
+		self.assertEqual(bytes(result_hash), known_bytes)
+		self.assertEqual(int(result_hash), known_bigint)
 
 	def test_color_hash(self):
 		result_hash = imagehash.colorhash(self.image)
 		known_hash = '07007000000'
+		known_bytes = b'\x1c\x01\xc0\x00\x00\x00'
+		known_bigint = 30793841770496
 		self.assertEqual(str(result_hash), known_hash)
+		self.assertEqual(bytes(result_hash), known_bytes)
+		self.assertEqual(int(result_hash), known_bigint)
 
 	def test_crop_resistant_hash(self):
 		result_hash = imagehash.crop_resistant_hash(self.peppers)

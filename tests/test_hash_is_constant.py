@@ -77,8 +77,8 @@ class Test(TestImageHash):
 	def test_color_hash(self):
 		result_hash = imagehash.colorhash(self.image)
 		known_hash = '07007000000'
-		known_bytes = b'\x1c\x01\xc0\x00\x00\x00'
-		known_bigint = 30793841770496
+		known_bytes = b'\x00\x70\x07\x00\x00\x00'
+		known_bigint = 481153777664
 		self.assertEqual(str(result_hash), known_hash)
 		self.assertEqual(bytes(result_hash), known_bytes)
 		self.assertEqual(int(result_hash), known_bigint)

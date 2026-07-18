@@ -47,6 +47,13 @@ class Test(unittest.TestCase):
 			hash = imagehash.whash(image)
 			self.assertEqual(hash.hash.size, default_hash_size**2)
 
+	def test_empty_image(self):
+		image = Image.new('RGB', (10, 10), 'white').crop((5, 5, 5, 5))
+		hash = imagehash.whash(image)
+		self.assertEqual(image.size, (0, 0))
+		self.assertEqual(hash.hash.size, 8**2)
+		self.assertEqual(str(hash), '0' * 16)
+
 	def test_hash_size_not_2power(self):
 		emsg = 'hash_size is not power of 2'
 		for hash_size in [3, 7, 12]:

@@ -359,6 +359,9 @@ def whash(image, hash_size=8, image_scale=None, mode='haar', remove_max_haar_ll=
 	@remove_max_haar_ll - remove the lowest low level (LL) frequency using Haar wavelet.
 	"""
 	import pywt
+	# Empty images have no scale; match average_hash by returning a zero hash.
+	if min(image.size) == 0:
+		return ImageHash(numpy.zeros((hash_size, hash_size), dtype=bool))
 	if image_scale is not None:
 		assert image_scale & (image_scale - 1) == 0, 'image_scale is not power of 2'
 	else:

@@ -497,6 +497,8 @@ class ImageMultiHash:
 		:param bit_error_rate: Percentage of bits which can be incorrect, an alternative to the hamming cutoff. The
 		default of 0.25 means that the segment hashes can be up to 25% different
 		"""
+		if not self.segment_hashes or not other_hash.segment_hashes:
+			return 0, 0
 		# Set default hamming cutoff if it's not set.
 		if hamming_cutoff is None:
 			if bit_error_rate is None:

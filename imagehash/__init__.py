@@ -409,6 +409,10 @@ def colorhash(image, binbits=3):
 
 	# bin in hsv space:
 	intensity = numpy.asarray(image.convert('L')).flatten()
+	# Empty images have no pixels; match average_hash by returning a zero hash.
+	if intensity.size == 0:
+		bitarray = [0] * ((2 + 6 * 2) * binbits)
+		return ImageHash(numpy.asarray(bitarray).reshape((-1, binbits)))
 	h, s, v = [numpy.asarray(v).flatten() for v in image.convert('HSV').split()]
 	# black bin
 	mask_black = intensity < 256 // 8

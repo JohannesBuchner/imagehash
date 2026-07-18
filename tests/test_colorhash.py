@@ -40,6 +40,14 @@ class Test(TestImageHash):
 	def test_colorhash_size(self):
 		self.check_hash_size(self.func, self.image)
 
+	def test_empty_image(self):
+		from PIL import Image
+		image = Image.new('RGB', (10, 10), 'white').crop((5, 5, 5, 5))
+		image_hash = imagehash.colorhash(image)
+		self.assertEqual(image.size, (0, 0))
+		self.assertEqual(image_hash.hash.size, (2 + 6 * 2) * 3)
+		self.assertEqual(str(image_hash), '00000000000')
+
 	def check_hash_stored(self, func, image, binbits=CHECK_HASH_DEFAULT):
 		for bit in binbits:
 			image_hash = func(image, bit)

@@ -112,6 +112,7 @@ The following pages show groups of images with the same hash (the hashing method
 * `average_hash <https://johannesbuchner.github.io/imagehash/art2.html>`__ (`with z-transform <https://johannesbuchner.github.io/imagehash/art8.html>`__)
 
 For understanding hash distances, check out these excellent blog posts:
+
 * https://tech.okcupid.com/evaluating-perceptual-image-hashes-at-okcupid-e98a3e74aa3a
 * https://content-blockchain.org/research/testing-different-image-hash-functions/
 

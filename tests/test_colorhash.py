@@ -2,6 +2,9 @@ from __future__ import absolute_import, division, print_function
 
 import unittest
 
+import numpy
+from PIL import Image
+
 import imagehash
 
 from .utils import TestImageHash
@@ -55,6 +58,28 @@ class Test(TestImageHash):
 			image_hash = func(image, bit)
 			emsg = 'bit={} is not respected'.format(bit)
 			self.assertEqual(image_hash.hash.size, (2 + 6 * 2) * bit, emsg)
+
+	def test_colorhash_saturation_boundary(self):
+		# The faint/bright split must partition the coloured pixels: with `<` on one
+		# side and `>` on the other, saturation 256 * 2 // 3 belongs to neither hue
+		# histogram, while still counting towards the denominator.
+		def uniform_hsv(saturation):
+			arr = numpy.zeros((16, 16, 3), dtype=numpy.uint8)
+			arr[..., 0] = 30
+			arr[..., 1] = saturation
+			arr[..., 2] = 255
+			image = Image.fromarray(arr, 'HSV').convert('RGB')
+			round_tripped = numpy.asarray(image.convert('HSV'))[..., 1]
+			emsg = 'RGB round trip changed the saturation under test'
+			self.assertEqual(sorted(set(round_tripped.flatten().tolist())), [saturation], emsg)
+			return image
+
+		boundary = 256 * 2 // 3
+		below = imagehash.colorhash(uniform_hsv(boundary - 1))
+		on = imagehash.colorhash(uniform_hsv(boundary))
+		above = imagehash.colorhash(uniform_hsv(boundary + 1))
+		self.assertEqual(on, above, 'saturation {} should hash like {}'.format(boundary, boundary + 1))
+		self.assertNotEqual(on, below, 'saturation {} should not hash like {}'.format(boundary, boundary - 1))
 
 	def check_hash_size(self, func, image, binbits=CHECK_HASH_SIZE_DEFAULT):
 		for bit in binbits:

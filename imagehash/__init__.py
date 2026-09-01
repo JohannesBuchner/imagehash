@@ -419,7 +419,7 @@ def colorhash(image, binbits=3):
 	# two color bins (medium and high saturation, not in the two above)
 	mask_colors = numpy.logical_and(~mask_black, ~mask_gray)
 	mask_faint_colors = numpy.logical_and(mask_colors, s < 256 * 2 // 3)
-	mask_bright_colors = numpy.logical_and(mask_colors, s > 256 * 2 // 3)
+	mask_bright_colors = numpy.logical_and(mask_colors, s >= 256 * 2 // 3)
 
 	c = max(1, mask_colors.sum())
 	# in the color bins, make sub-bins by hue

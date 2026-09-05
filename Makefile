@@ -71,26 +71,15 @@ test-all: ## run tests on every Python version with tox
 	tox
 
 coverage: ## check code coverage quickly with the default Python
-	coverage run --source ultranest -m pytest
+	coverage run --source imagehash -m pytest
 	coverage report -m
 	coverage html
 	$(BROWSER) htmlcov/index.html
 
-docs: ## generate Sphinx HTML documentation, including API docs
-	rm -f docs/ultranest.rst
-	rm -f docs/modules.rst
-	#nbstripout docs/*.ipynb
-	sphinx-apidoc -H API -o docs/ ultranest
-	$(MAKE) -C docs clean
-	$(MAKE) -C docs html
-	sed --in-place '/href="ultranest\/mlfriends.html"/d' docs/build/html/_modules/index.html
-	$(BROWSER) docs/build/html/index.html
-
-servedocs: docs ## compile the docs watching for changes
-	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
+docs: 
 
 release: dist ## package and upload a release
-	twine upload -s dist/*.tar.gz dist/*.whl
+	twine upload dist/*.tar.gz dist/*.whl
 
 dist: clean ## builds source and wheel package
 	$(PYTHON) setup.py sdist

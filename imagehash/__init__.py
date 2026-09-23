@@ -28,8 +28,6 @@ Rotation by 26: 21 Hamming difference
 >>>
 """
 
-from __future__ import absolute_import, division, print_function
-
 import sys
 
 import numpy
@@ -409,7 +407,7 @@ def colorhash(image, binbits=3):
 
 	# bin in hsv space:
 	intensity = numpy.asarray(image.convert('L')).flatten()
-	h, s, v = [numpy.asarray(v).flatten() for v in image.convert('HSV').split()]
+	h, s, v = (numpy.asarray(v).flatten() for v in image.convert('HSV').split())
 	# black bin
 	mask_black = intensity < 256 // 8
 	frac_black = mask_black.mean()

@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-from __future__ import absolute_import, division, print_function
-
 from PIL import Image
 
 import imagehash
@@ -33,7 +31,7 @@ def find_similar_images(userpaths, hashfunc=imagehash.average_hash):
 				print('rm -v', img)
 		images[hash] = images.get(hash, []) + [img]
 
-	# for k, img_list in six.iteritems(images):
+	# for k, img_list in images.items():
 	# 	if len(img_list) > 1:
 	# 		print(" ".join(img_list))
 

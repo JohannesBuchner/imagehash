@@ -650,6 +650,8 @@ def crop_resistant_hash(
 
 	Note: Slightly different segmentations are produced when using pillow version 6 vs. >=7, due to a change in
 	rounding in the greyscale conversion. This leads to a slightly different result.
+	Segments whose bounding boxes round to zero width or height are skipped. If no segments remain, the whole
+	image is hashed instead.
 	:param image: The image to hash
 	:param hash_func: The hashing function to use
 	:param limit_segments: If you have storage requirements, you can limit to hashing only the M largest segments
@@ -689,6 +691,8 @@ def crop_resistant_hash(
 		max_x = (max(coord[1] for coord in segment) + 1) * scale_w
 		# Compute robust hash for each bounding box
 		bounding_box = orig_image.crop((min_x, min_y, max_x, max_y))
+		if 0 in bounding_box.size:
+			continue
 		hashes.append(hash_func(bounding_box))
 		# Show bounding box
 		# im_segment = image.copy()
@@ -697,4 +701,6 @@ def crop_resistant_hash(
 		# im_segment.show()
 		# bounding_box.show()
 
+	if not hashes:
+		hashes.append(hash_func(orig_image))
 	return ImageMultiHash(hashes)

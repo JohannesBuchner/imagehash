@@ -2,6 +2,7 @@ from __future__ import absolute_import, division, print_function
 
 import unittest
 from datetime import datetime
+from unittest.mock import patch
 
 import imagehash
 
@@ -38,6 +39,45 @@ class Test(TestImageHash):
 			segmented_ahash.matches(segmented_dhash),
 			'Segmented hash should not match when the underlying hashing method is not the same'
 		)
+
+	def test_segmented_hash__empty_crops(self):
+		image = self.peppers.resize((150, 150))
+		# At scale 0.5, both 37.5 and 38.5 round to 38 in Pillow (#205).
+		empty_segments = [
+			{(75, 0), (76, 299)},
+			{(0, 75), (299, 76)},
+			{(75, 75), (76, 76)},
+		]
+		full_segment = {(0, 0), (299, 299)}
+		for hash_func in (imagehash.whash, imagehash.dhash):
+			with self.subTest(hash_func=hash_func.__name__):
+				with patch.object(imagehash, '_find_all_segments', return_value=empty_segments + [full_segment]):
+					result = imagehash.crop_resistant_hash(image, hash_func)
+				self.assertEqual(len(result.segment_hashes), 1)
+				self.assertEqual(str(result), str(hash_func(image)))
+
+	def test_segmented_hash__all_empty_crops(self):
+		image = self.peppers.resize((150, 150))
+		empty_segments = [{(75, 0), (76, 299)}, {(0, 75), (299, 76)}]
+		for limit_segments in (None, 1):
+			with self.subTest(limit_segments=limit_segments):
+				with patch.object(imagehash, '_find_all_segments', return_value=empty_segments):
+					result = imagehash.crop_resistant_hash(image, imagehash.whash, limit_segments=limit_segments)
+				self.assertEqual(len(result.segment_hashes), 1)
+				self.assertEqual(str(result), str(imagehash.whash(image)))
+				self.assertTrue(result.matches(result))
+				self.assertEqual(result - result, 0)
+				self.assertEqual(str(imagehash.hex_to_multihash(str(result))), str(result))
+
+	def test_segmented_hash__small_image(self):
+		# Exercise resizing, filtering, segmentation, and wavelet hashing together.
+		image = self.peppers.resize((4, 4))
+		result = imagehash.crop_resistant_hash(
+			image, imagehash.whash, min_segment_size=1, segmentation_image_size=30
+		)
+		self.assertGreater(len(result.segment_hashes), 0)
+		self.assertTrue(result.matches(result))
+		self.assertEqual(str(imagehash.hex_to_multihash(str(result))), str(result))
 
 	def test_segmented_hash__limit_segments(self):
 		segmented_orig = imagehash.crop_resistant_hash(self.image)

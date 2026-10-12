@@ -57,8 +57,9 @@ clean-test: ## remove test and coverage artifacts
 clean-doc:
 	rm -rf docs/build
 
-lint: ## check style with flake8
+lint: ## check style with flake8 and pycodestyle
 	flake8 .
+	pycodestyle .
 
 lint-fix: ## fix style with autopep8 and isort; ignores to not autofix tabs to spaces, but still warn when mixed
 	autopep8 . --in-place --aggressive --aggressive --aggressive --recursive --ignore=W191,E101,E111,E122

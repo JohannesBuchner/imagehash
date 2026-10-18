@@ -49,8 +49,24 @@ Basic usage
 	9f172786e71f1e00
 	>>> print(hash == otherhash)
 	False
-	>>> print(hash - otherhash)  # hamming distance
+	>>> print(hash.symmetric_distance(otherhash))  # hamming distance
 	33
+	>>> print(hash - otherhash)  # the same for single hashes
+	33
+
+:code:`symmetric_distance` is the suggested way to compare two hashes:
+it is available for every hash type and gives the same result whichever hash comes first.
+For single hashes it is the hamming distance, identical to :code:`hash - otherhash`.
+For crop-resistant multi-hashes, :code:`a - b` is one-sided (it counts the segments of :code:`a`
+that have no match in :code:`b`, so it can differ from :code:`b - a`),
+while :code:`a.symmetric_distance(b)` is the larger of the two::
+
+	>>> multihash = imagehash.crop_resistant_hash(Image.open('tests/data/imagehash.png'))
+	>>> othermultihash = imagehash.crop_resistant_hash(Image.open('tests/data/peppers.png'))
+	>>> print(multihash.symmetric_distance(othermultihash))
+	6
+	>>> print(multihash - othermultihash, othermultihash - multihash)
+	1 6
 
 Each algorithm can also have its hash size adjusted (or in the case of
 colorhash, its :code:`binbits`). Increasing the hash size allows an

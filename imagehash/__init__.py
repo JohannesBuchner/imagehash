@@ -111,6 +111,16 @@ class ImageHash:
 			raise TypeError('ImageHashes must be of the same shape.', self.hash.shape, other.hash.shape)
 		return numpy.count_nonzero(self.hash.flatten() != other.hash.flatten())
 
+	def symmetric_distance(self, other):
+		# type: (ImageHash) -> int
+		"""
+		Hamming distance to `other`, the number of bits that differ.
+		For a single hash, `a - b` is already symmetric, so this always equals `a - b` (and `b - a`).
+		It is provided so that all hash types, including ImageMultiHash, can be compared with the same
+		order-independent method.
+		"""
+		return self.__sub__(other)
+
 	def __eq__(self, other):
 		# type: (object) -> bool
 		if other is None:
@@ -467,21 +477,12 @@ class ImageMultiHash:
 	def __sub__(self, other, hamming_cutoff=None, bit_error_rate=None):
 		# type: (ImageMultiHash, float | None, float | None) -> float
 		"""
-		Distance between two multi-hashes. It is the larger of the two one-sided distances
-		(see `_match_distance`), so `a - b == b - a`, and it is zero only if every segment of
-		each hash has an identical segment in the other.
-		"""
-		return max(
-			self._match_distance(other, hamming_cutoff, bit_error_rate),
-			other._match_distance(self, hamming_cutoff, bit_error_rate),
-		)
-
-	def _match_distance(self, other, hamming_cutoff=None, bit_error_rate=None):
-		# type: (ImageMultiHash, float | None, float | None) -> float
-		"""
-		One-sided distance: the number of segments of this hash without a match in `other`,
-		plus the mean hamming distance of the matches as a fraction of the segment hash length.
-		This is what `best_match` ranks by.
+		One-sided distance from this hash to `other`, normalised by the left operand: the number of
+		segments of this hash without a match in `other`, plus the mean hamming distance of the matched
+		segments as a fraction of the segment hash length.
+		Segments of `other` that match nothing in this hash are not counted, so `a - b` and `b - a`
+		can differ, for example when the two hashes have different numbers of segments.
+		Use `symmetric_distance` for an order-independent distance.
 		"""
 		matches, sum_distance = self.hash_diff(other, hamming_cutoff, bit_error_rate)
 		max_difference = len(self.segment_hashes)
@@ -491,6 +492,25 @@ class ImageMultiHash:
 		tie_breaker = 0 - (float(sum_distance) / max_distance)
 		match_score = matches + tie_breaker
 		return max_difference - match_score
+
+	def symmetric_distance(self, other, hamming_cutoff=None, bit_error_rate=None):
+		# type: (ImageMultiHash, float | None, float | None) -> float
+		"""
+		Order-independent distance between two multi-hashes: the larger of `a - b` and `b - a`,
+		so `a.symmetric_distance(b) == b.symmetric_distance(a)`.
+		It is zero only if every segment of each hash has an identical segment in the other.
+		It equals `a - b` whenever `a - b >= b - a`, and is larger otherwise, typically when `b` has segments
+		without a match in `a`: e.g. `crop.symmetric_distance(original)` also counts the segments of the original that are
+		missing from the crop, which `crop - original` (and `best_match`) ignore.
+		:param other: The image multi hash to compare against
+		:param hamming_cutoff: The maximum hamming distance to a region hash in the target hash
+		:param bit_error_rate: Percentage of bits which can be incorrect, an alternative to the hamming cutoff.
+		Defaults to 0.25 if unset, which means the hash can be 25% different
+		"""
+		return max(
+			self.__sub__(other, hamming_cutoff, bit_error_rate),
+			other.__sub__(self, hamming_cutoff, bit_error_rate),
+		)
 
 	def __hash__(self):
 		return hash(tuple(hash(segment) for segment in self.segment_hashes))
@@ -553,7 +573,7 @@ class ImageMultiHash:
 		"""
 		return min(
 			other_hashes,
-			key=lambda other_hash: self._match_distance(other_hash, hamming_cutoff, bit_error_rate)
+			key=lambda other_hash: self.__sub__(other_hash, hamming_cutoff, bit_error_rate)
 		)
 
 

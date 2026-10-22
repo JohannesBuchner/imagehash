@@ -62,6 +62,31 @@ images in a directory.
 
 Source hosted at GitHub: https://github.com/JohannesBuchner/imagehash
 
+Why are pHash distances often even?
+-----------------------------------
+
+:code:`phash` sets a bit when a low-frequency DCT coefficient is strictly
+greater than the median. With the default :code:`hash_size=8`, and no ties
+at the median, this gives 32 set bits out of 64. Two hashes with the same
+number of set bits differ in equally many 1-to-0 and 0-to-1 positions, so
+their Hamming distance is even.
+
+This is not guaranteed: ties at the median can change the number of set
+bits. For example, these constant images have distance 1::
+
+	>>> from PIL import Image
+	>>> import imagehash
+	>>> black_hash = imagehash.phash(Image.new('L', (32, 32), 0))
+	>>> white_hash = imagehash.phash(Image.new('L', (32, 32), 255))
+	>>> assert black_hash - white_hash == 1
+
+:code:`phash_simple` uses a mean threshold and a different DCT calculation
+and coefficient block, so it does not enforce the same set-bit count.
+Even distances do not mean half of the bit positions can be discarded:
+the positions still carry information. Changing :code:`hash_size` also
+changes the selected coefficients, so keep hash settings consistent when
+comparing images or stored hashes.
+
 References
 -----------
 

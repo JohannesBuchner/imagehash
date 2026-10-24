@@ -72,7 +72,9 @@ class Test(TestImageHash):
 				'98d8f1ecd8f0f0e1,'
 				'a082c0c49acc6dbd,'
 				'f1f39b99c1c1b1b1,'
-				'3a7ece1c9df4fcb9'
+				'3a7ece1c9df4fcb9,'
+				'000000000000036e,'
+				'07686e363f8ec7e3'
 			)
 		else:
 			known_hash = (
@@ -103,10 +105,12 @@ class Test(TestImageHash):
 		pixels = numpy.array(image).astype(numpy.float32)
 		# Segment
 		segments = imagehash._find_all_segments(pixels, 128, 500)
-		known_segment_count = 6
+		known_segment_count = 8 if _pillow_has_convert_fix() else 6
 		self.assertEqual(len(segments), known_segment_count)
 		if _pillow_has_convert_fix():
 			known_segments = sorted([
+				{'length': 512, 'min_x': 268, 'min_y': 14, 'max_x': 299, 'max_y': 44},
+				{'length': 590, 'min_x': 22, 'min_y': 148, 'max_x': 70, 'max_y': 179},
 				{'length': 595, 'min_x': 20, 'min_y': 0, 'max_x': 60, 'max_y': 31},
 				{'length': 1458, 'min_x': 61, 'min_y': 0, 'max_x': 156, 'max_y': 58},
 				{'length': 3505, 'min_x': 0, 'min_y': 111, 'max_x': 97, 'max_y': 191},

@@ -620,7 +620,7 @@ def _find_all_segments(pixels, segment_threshold, min_segment_size):
 
 	# Invert the threshold matrix, and find "valleys"
 	threshold_pixels_i = numpy.invert(threshold_pixels)
-	while len(already_segmented) < img_width * img_height:
+	while numpy.bitwise_and(threshold_pixels_i, unassigned_pixels).any():
 		remaining_pixels = numpy.bitwise_and(threshold_pixels_i, unassigned_pixels)
 		segment = _find_region(remaining_pixels, already_segmented)
 		# Apply segment

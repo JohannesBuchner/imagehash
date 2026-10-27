@@ -466,6 +466,23 @@ class ImageMultiHash:
 
 	def __sub__(self, other, hamming_cutoff=None, bit_error_rate=None):
 		# type: (ImageMultiHash, float | None, float | None) -> float
+		"""
+		Distance between two multi-hashes. It is the larger of the two one-sided distances
+		(see `_match_distance`), so `a - b == b - a`, and it is zero only if every segment of
+		each hash has an identical segment in the other.
+		"""
+		return max(
+			self._match_distance(other, hamming_cutoff, bit_error_rate),
+			other._match_distance(self, hamming_cutoff, bit_error_rate),
+		)
+
+	def _match_distance(self, other, hamming_cutoff=None, bit_error_rate=None):
+		# type: (ImageMultiHash, float | None, float | None) -> float
+		"""
+		One-sided distance: the number of segments of this hash without a match in `other`,
+		plus the mean hamming distance of the matches as a fraction of the segment hash length.
+		This is what `best_match` ranks by.
+		"""
 		matches, sum_distance = self.hash_diff(other, hamming_cutoff, bit_error_rate)
 		max_difference = len(self.segment_hashes)
 		if matches == 0:
@@ -536,7 +553,7 @@ class ImageMultiHash:
 		"""
 		return min(
 			other_hashes,
-			key=lambda other_hash: self.__sub__(other_hash, hamming_cutoff, bit_error_rate)
+			key=lambda other_hash: self._match_distance(other_hash, hamming_cutoff, bit_error_rate)
 		)
 
 

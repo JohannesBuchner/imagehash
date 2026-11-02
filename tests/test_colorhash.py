@@ -81,6 +81,21 @@ class Test(TestImageHash):
 		self.assertEqual(on, above, 'saturation {} should hash like {}'.format(boundary, boundary + 1))
 		self.assertNotEqual(on, below, 'saturation {} should not hash like {}'.format(boundary, boundary - 1))
 
+	def test_colorhash_fractions_are_binary_encoded(self):
+		# Each fraction is stored as a binary number of binbits bits, so that
+		# different fractions give different bits: an image that is half black
+		# (4/8) and one that is three quarters black (6/8) must not share a hash.
+		def black_and_red(black_pixels):
+			arr = numpy.zeros((8, 8, 3), dtype=numpy.uint8)
+			arr.reshape(-1, 3)[black_pixels:] = (255, 0, 0)
+			return Image.fromarray(arr)
+
+		for binbits in CHECK_HASH_DEFAULT:
+			hashes = [imagehash.colorhash(black_and_red(n), binbits) for n in range(0, 64, 64 >> binbits)]
+			black_bits = [''.join('1' if b else '0' for b in h.hash[0]) for h in hashes]
+			expected = [format(v, '0{}b'.format(binbits)) for v in range(2**binbits)]
+			self.assertEqual(black_bits, expected, 'binbits={}'.format(binbits))
+
 	def check_hash_size(self, func, image, binbits=CHECK_HASH_SIZE_DEFAULT):
 		for bit in binbits:
 			with self.assertRaises(ValueError):

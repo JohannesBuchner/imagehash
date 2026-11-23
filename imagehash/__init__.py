@@ -28,7 +28,6 @@ Rotation by 26: 21 Hamming difference
 >>>
 """
 
-from __future__ import absolute_import, division, print_function
 
 import sys
 

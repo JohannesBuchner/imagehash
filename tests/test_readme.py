@@ -1,7 +1,5 @@
 import os
 
-import six
-
 
 def test_run():
 	# test code in README.rst file
@@ -13,4 +11,4 @@ def test_run():
 
 	code = ''.join(chunk)
 	print("running::\n" + code)
-	print("result:", six.exec_(code, {}, {}))
+	print("result:", exec(code, {}, {}))

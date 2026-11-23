@@ -4,6 +4,8 @@ import unittest
 from datetime import datetime
 from unittest.mock import patch
 
+import numpy
+
 import imagehash
 
 from .utils import TestImageHash
@@ -142,6 +144,13 @@ class Test(TestImageHash):
 		self.assertEqual(
 			crop_hash_asymmetric, full_hash, 'Asymmetrically cropped image hash should match full image hash'
 		)
+
+	def test_find_all_segments__every_valley_is_returned(self):
+		# Vertical stripes: a 5 px wide valley, a 13 px wide hill and a 2 px wide valley.
+		pixels = numpy.zeros((20, 20), dtype=numpy.float32)
+		pixels[:, 5:18] = 255
+		segments = imagehash._find_all_segments(pixels, 128, 10)
+		self.assertEqual(sorted(len(s) for s in segments), [40, 100, 260])
 
 
 if __name__ == '__main__':

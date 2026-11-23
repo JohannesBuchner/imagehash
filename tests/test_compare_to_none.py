@@ -21,6 +21,18 @@ class TestCompareToNone(unittest.TestCase):
 		self.assertFalse(self.multi == None)  # noqa: E711
 		self.assertTrue(self.multi != None)  # noqa: E711
 
+	def test_imagehash_is_not_equal_to_other_types(self):
+		for other in [str(self.hash), 0, self.multi]:
+			self.assertFalse(self.hash == other)
+			self.assertTrue(self.hash != other)
+		self.assertNotIn(self.hash, [str(self.hash), self.other])
+		self.assertIn(self.hash, [str(self.hash), self.hash])
+
+	def test_multihash_is_not_equal_to_other_types(self):
+		for other in [str(self.multi), 0, self.hash]:
+			self.assertFalse(self.multi == other)
+			self.assertTrue(self.multi != other)
+
 	def test_imagehash_comparisons_are_unchanged(self):
 		same = imagehash.ImageHash(np.zeros((8, 8), dtype=bool))
 		self.assertTrue(self.hash == same)

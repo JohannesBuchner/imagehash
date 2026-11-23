@@ -113,7 +113,7 @@ class ImageHash:
 
 	def __eq__(self, other):
 		# type: (object) -> bool
-		if other is None:
+		if not isinstance(other, ImageHash):
 			return False
 		return numpy.array_equal(self.hash.flatten(), other.hash.flatten())  # type: ignore
 
@@ -456,7 +456,7 @@ class ImageMultiHash:
 
 	def __eq__(self, other):
 		# type: (object) -> bool
-		if other is None:
+		if not isinstance(other, ImageMultiHash):
 			return False
 		return self.matches(other)  # type: ignore
 

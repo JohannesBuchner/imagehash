@@ -97,6 +97,17 @@ class ImageHash:
 		# type: (NDArray) -> None
 		self.hash = binary_array  # type: NDArray
 
+	def __bytes__(self):
+		if self.hash.size % 8 == 0:
+			binary_array = self.hash
+		else:
+			# numpy.packbits inserts 0s at the end, so force 0s at the beginning first
+			binary_array = numpy.pad(self.hash.flatten(), pad_width=(8 - (self.hash.size % 8), 0), mode='constant')
+		return numpy.packbits(binary_array).tobytes()
+
+	def __int__(self):
+		return int.from_bytes(bytes(self), byteorder='big', signed=True)
+
 	def __str__(self):
 		return _binary_array_to_hex(self.hash.flatten())
 

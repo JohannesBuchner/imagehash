@@ -151,27 +151,18 @@ For colorhash::
 Efficient database search
 -------------------------
 
-To search a local photo collection, the runnable
-`SQLite reverse image search example <examples/sqlite_search.py>`_ builds a
-persistent index using Python's standard SQLite library. From the checkout,
-with ImageHash installed::
+Try the `SQLite reverse image search notebook <examples/sqlite_search.ipynb>`_
+to index two images, find a resized copy, and explore how the Hamming distance
+threshold affects the results.
+
+.. image:: https://mybinder.org/badge_logo.svg
+   :target: https://mybinder.org/v2/gh/JohannesBuchner/imagehash/HEAD?urlpath=lab/tree/examples/sqlite_search.ipynb
+   :alt: Run the SQLite reverse image search notebook on Binder
+
+To index your own photo directory from the command line::
 
     python examples/sqlite_search.py index photos.sqlite ./photos
     python examples/sqlite_search.py search photos.sqlite query.jpg --distance 4
-
-The first command fingerprints images recursively using 64-bit pHash. Run it
-again with a file or directory to refresh those paths. Removed files remain in
-the index. The second command prints Hamming distance and path, closest first.
-Distance zero means the fingerprints match; different images can share a hash.
-Choose the threshold using examples representative of your collection.
-
-The index splits each fingerprint into four 16-bit bands. At distance three
-or less, a match must share at least one band exactly. At distances four
-through seven, at least one band differs by at most one bit. SQLite looks up
-those band values, and the script checks each candidate's full Hamming
-distance. Larger radii use an exhaustive scan. All three paths return every
-hash within the requested radius. Collections with many identical bands can
-produce large candidate sets.
 
 For storing the hashes in a database and using fast hamming distance
 searches, see pointers at https://github.com/JohannesBuchner/imagehash/issues/127

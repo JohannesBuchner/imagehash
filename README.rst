@@ -55,7 +55,10 @@ Basic usage
 Each algorithm can also have its hash size adjusted (or in the case of
 colorhash, its :code:`binbits`). Increasing the hash size allows an
 algorithm to store more detail in its hash, increasing its sensitivity
-to changes in detail.
+to changes in detail. For wavelet hashing (:code:`whash`), the output
+dimensions also depend on the wavelet. With :code:`hash_size=16` and
+:code:`image_scale=256`, Haar produces a 16 x 16 hash and Daubechies
+:code:`db4` produces a 22 x 22 hash.
 
 The demo script **find_similar_images** illustrates how to find similar
 images in a directory.

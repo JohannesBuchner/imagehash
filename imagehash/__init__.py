@@ -348,7 +348,10 @@ def whash(image, hash_size=8, image_scale=None, mode='haar', remove_max_haar_ll=
 	based on https://www.kaggle.com/c/avito-duplicate-ads-detection/
 
 	@image must be a PIL instance.
-	@hash_size must be a power of 2 and less than @image_scale.
+	@hash_size must be a power of 2 and no larger than @image_scale.
+		It determines the wavelet decomposition level. The Haar hash has
+		@hash_size coefficients per side. With 'db4', symmetric boundary
+		extension can produce more coefficients per side.
 	@image_scale must be power of 2 and less than image size. By default is equal to max
 					power of 2 for an input image.
 	@mode (see modes in pywt library):

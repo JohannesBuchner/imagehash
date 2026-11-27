@@ -81,6 +81,63 @@ References
 .. _pypi: https://pypi.python.org/pypi/ImageHash
 .. _crop_resistant_hashref: https://ieeexplore.ieee.org/document/6980335
 
+Preparing images
+================
+
+The hash functions take a Pillow image and convert it themselves: to grayscale
+for the luminance hashes, to HSV for colorhash. A few kinds of input need
+preparation first, otherwise the hash describes something other than the picture
+you see.
+
+* **Transparency**: the alpha channel is dropped in the conversion, so a
+  transparent pixel contributes whatever colour is stored underneath it (often
+  black or white). Two images that look the same can then hash differently.
+  Flatten onto a fixed background first. The example assumes a white
+  background::
+
+	>>> image = Image.open('tests/data/imagehash.png').convert('RGBA')
+	>>> background = Image.new('RGBA', image.size, (255, 255, 255, 255))
+	>>> image = Image.alpha_composite(background, image)
+
+  For a black background use :code:`(0, 0, 0, 255)` instead. The background
+  colour becomes part of the hash, so pick one and use it for every image you
+  compare, or compute a hash on each background and compare both.
+
+* **EXIF orientation**: Pillow does not apply the orientation tag of JPEG
+  photos, and the hashes are not rotation invariant (a 90 degree rotation
+  changes about half of the bits). Apply it with
+  :code:`PIL.ImageOps.exif_transpose(image)` before hashing.
+
+* **High bit depth**: Pillow clips 16-bit (mode ``I;16``), 32-bit integer
+  (``I``) and float (``F``) images at 255 when converting them to grayscale,
+  which turns most of the image white. Scale them to 0-255 yourself, for
+  example :code:`Image.fromarray((numpy.asarray(image) >> 8).astype(numpy.uint8))`
+  for 16-bit data.
+
+* **Colour profiles**: an embedded ICC profile describes how a file's stored
+  pixel values map to real colours, so that a viewer can show the same colours
+  on different screens and printers. The hashes ignore it and use the stored
+  values as they are. If two images differ only by their profile and that
+  matters to you, convert both to sRGB first::
+
+	>>> import io
+	>>> from PIL import ImageCms
+	>>> image = Image.open('tests/data/peppers.png')
+	>>> profile = io.BytesIO(image.info['icc_profile'])
+	>>> image = ImageCms.profileToProfile(image, profile, ImageCms.createProfile('sRGB'))
+
+* **Animated and multi-page images** (GIF, APNG, TIFF): only the currently
+  selected frame is hashed, which is the first one unless you call
+  :code:`image.seek(n)`. Use :code:`PIL.ImageSequence.Iterator(image)` to hash
+  every frame. Video files are not covered: decode the frames with a video
+  library and hash each frame as an image.
+
+* **What does not need preparation**: resolution and moderate JPEG
+  compression. The images are shrunk to a few pixels before hashing, so a
+  half-size copy or a quality-50 JPEG of the same picture usually gets the same
+  hash. Mirroring, rotating and cropping do change the hash; for crops see
+  :code:`crop_resistant_hash`.
+
 Examples
 =========
 

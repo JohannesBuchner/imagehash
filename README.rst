@@ -154,6 +154,19 @@ For colorhash::
 Efficient database search
 -------------------------
 
+Try the `SQLite reverse image search notebook <examples/sqlite_search.ipynb>`_
+to index two images, find a resized copy, and explore how the Hamming distance
+threshold affects the results.
+
+.. image:: https://mybinder.org/badge_logo.svg
+   :target: https://mybinder.org/v2/gh/JohannesBuchner/imagehash/HEAD?urlpath=lab/tree/examples/sqlite_search.ipynb
+   :alt: Run the SQLite reverse image search notebook on Binder
+
+To index your own photo directory from the command line::
+
+    python examples/sqlite_search.py index photos.sqlite ./photos
+    python examples/sqlite_search.py search photos.sqlite query.jpg --distance 4
+
 For storing the hashes in a database and using fast hamming distance
 searches, see pointers at https://github.com/JohannesBuchner/imagehash/issues/127
 (a blog post on how to do this would be a great contribution!)
